@@ -218,3 +218,139 @@ Estas acciones pueden incluir:
 - Material educativo sobre riesgos como phishing, fuga de información o uso indebido de datos.
 
 El objetivo de estas iniciativas es fomentar una **cultura de seguridad**, en la que todos los empleados comprendan su papel en la protección de la información y colaboren activamente en la prevención de incidentes de seguridad.
+
+##  Parte 2 – Implementación de Políticas DLP (Control de Dispositivos USB)
+
+###  Descripción
+
+En esta fase del laboratorio se implementan políticas de **Data Loss Prevention (DLP)** para restringir el acceso a dispositivos de almacenamiento extraíble (USB) dentro de un entorno Windows.
+
+El objetivo es simular un escenario empresarial donde se previene la **exfiltración de datos sensibles** mediante dispositivos externos.
+
+---
+
+###  Objetivo
+
+* Restringir el acceso de lectura y escritura a dispositivos USB
+* Aplicar políticas de seguridad a nivel de sistema
+* Validar el comportamiento en un usuario estándar
+* Simular controles básicos de protección de datos en endpoint
+
+---
+
+###  Configuración de Políticas
+
+Se accede al editor de directivas de grupo local:
+
+```bash
+gpedit.msc
+```
+
+Ruta utilizada:
+
+```text
+Configuración del equipo
+→ Plantillas administrativas
+→ Sistema
+→ Acceso de almacenamiento extraíble
+```
+
+ Vista de políticas disponibles:
+
+![Políticas de almacenamiento removible](images/removable-storage-policies.png)
+
+---
+
+###  Restricción de acceso a dispositivos USB
+
+Se configuraron las siguientes políticas:
+
+####  Denegar acceso de lectura
+
+* Política: `Discos extraíbles: denegar acceso de lectura`
+* Estado: **Habilitada**
+
+ Evidencia:
+
+![Bloqueo de lectura USB](images/usb-deny-read-enabled.png)
+
+---
+
+####  Denegar acceso de escritura
+
+* Política: `Discos extraíbles: denegar acceso de escritura`
+* Estado: **Habilitada**
+
+ Evidencia:
+
+![Bloqueo de escritura USB](images/usb-deny-write-enabled.png)
+
+---
+
+###  Aplicación de políticas
+
+Para forzar la aplicación inmediata de las directivas se ejecuta:
+
+```bash
+gpupdate /force
+```
+
+📸 Evidencia:
+
+![Aplicación de políticas](images/gpupdate-force.png)
+
+---
+
+###  Creación de usuario estándar
+
+Se crea un usuario sin privilegios administrativos para validar las restricciones:
+
+* Usuario: `usuarioDLP`
+* Tipo: **Cuenta estándar**
+
+📸 Evidencia:
+
+![Usuario creado](images/user-created.png)
+
+---
+
+###  Validación de restricciones
+
+Se inicia sesión con el usuario estándar y se prueba el acceso al dispositivo USB.
+
+####  Resultado:
+
+* El sistema detecta el dispositivo
+* Se bloquea el acceso al contenido
+* Se muestra error de permisos
+
+ Evidencia (bloqueo de lectura):
+
+![Acceso denegado USB](images/usb-blocked-read.png)
+
+---
+
+###  Análisis de resultados
+
+Las políticas configuradas han demostrado ser efectivas:
+
+* Se evita la lectura de datos desde el USB
+* Se bloquea la escritura en el dispositivo
+* El control se aplica correctamente a usuarios no privilegiados
+* El administrador mantiene control total del sistema
+
+Este comportamiento replica controles reales implementados en entornos corporativos para prevenir fugas de información.
+
+---
+
+###  Conclusión
+
+La implementación de políticas DLP mediante directivas de grupo permite:
+
+* Proteger información sensible
+* Reducir el riesgo de exfiltración de datos
+* Aplicar controles centralizados sobre dispositivos externos
+
+Este laboratorio demuestra cómo una configuración adecuada puede mitigar uno de los vectores más comunes de fuga de información en entornos empresariales.
+
+---
